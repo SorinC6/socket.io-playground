@@ -1,32 +1,34 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 
-const Chat = ({ socket, nickname }) => {
-  const [message, setMessage] = useState("");
-  const [chatMessages, setChatMessage] = useState([]);
-
-  useEffect(() => {
-    socket &&
-      socket.on("CHAT_MESSAGE", data => {
-        console.log("Data from the Server ", data.message);
-        setChatMessage(data.message);
-      });
-  }, []);
-
+const Chat = ({ socket, nickname, setMessage, message, serverMessage }) => {
+  const [allMessages, setAllMessages] = useState([]);
+  console.log("ChatContent ", serverMessage);
   const handleSend = () => {
     console.log("send");
+    console.log(message, nickname);
     socket.emit("CHAT_MESSAGE", {
       message,
       nickname
     });
   };
+  useEffect(() => {
+    setAllMessages(allMessages.concat(serverMessage));
+  }, []);
+
   return (
     <div>
       <Display>
         <p>Display messages</p>
-        {chatMessages.map(item => {
-          console.log("Messageee", item);
-        })}
+        {allMessages &&
+          allMessages.map(item => {
+            console.log(item);
+            return (
+              <p>
+                {item.nickname} : {item.message}
+              </p>
+            );
+          })}
       </Display>
       <InputArea>
         <input placeholder="input" onChange={e => setMessage(e.target.value)} />

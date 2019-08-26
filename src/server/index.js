@@ -8,7 +8,7 @@ const io = socketIo(server);
 
 const PORT = process.env.PORT || 4001;
 
-io.on("connection", function(socket) {
+io.on("connect", function(socket) {
   console.log("made socket connection ", socket.id);
 
   socket.on("CHAT_MESSAGE", data => {

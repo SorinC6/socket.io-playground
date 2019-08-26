@@ -8,6 +8,9 @@ const socketUrl = "http://localhost:4001";
 function App() {
   const [socketIo, setSocketIo] = useState(null);
   const [nickname, setNickname] = useState("");
+  const [message, setMessage] = useState("");
+  const [serverMessage, setServerMessage] = useState([]);
+
   useEffect(() => {
     initSocket();
   }, []);
@@ -15,10 +18,16 @@ function App() {
   const initSocket = () => {
     const socket = io(socketUrl);
     socket.on("connect", () => {
-      console.log("Connected React side");
+      console.log("Connected React side", socket.id);
+
+      socket.on("CHAT_MESSAGE", data => {
+        //console.log("Dataaa ", data);
+        setServerMessage(data);
+      });
     });
     setSocketIo(socket);
   };
+
   return (
     <div className="App">
       <h1>Socket.io Chat</h1>
@@ -29,7 +38,13 @@ function App() {
           onChange={e => setNickname(e.target.value)}
         />
       </form>
-      <Chat socket={socketIo} nickname={nickname} />
+      <Chat
+        socket={socketIo}
+        nickname={nickname}
+        setMessage={setMessage}
+        message={message}
+        serverMessage={serverMessage}
+      />
     </div>
   );
 }
